@@ -1,0 +1,12 @@
+[package]
+name = "backlight_control_rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "backlight_control_rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.21", features = ["derive"] }

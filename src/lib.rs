@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::cmp::{max, min};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::OnceLock;
@@ -66,7 +66,7 @@ pub fn adjust_brightness_relative(value: i16, percentage: bool) -> Result<(), st
 
     let new_brightness: i16 = brightness - value;
 
-    set_brightness(min(0, new_brightness.try_into().unwrap()))
+    set_brightness(max(0, new_brightness.try_into().unwrap()))
 }
 
 pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> Result<(), std::io::Error> {
@@ -82,5 +82,5 @@ pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> Result<(), st
         return Ok(());
     }
 
-    set_brightness(min(0, value))
+    set_brightness(value)
 }

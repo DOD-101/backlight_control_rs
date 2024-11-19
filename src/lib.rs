@@ -29,6 +29,16 @@ pub fn get_max_brightness() -> u16 {
         .expect("Failed to parse max brightness. This should never happen.")
 }
 
+pub fn get_brightness() -> u16 {
+    let brightness_path = vendor_path().join("brightness");
+
+    fs::read_to_string(&brightness_path)
+        .expect("Failed to read brightness file")
+        .trim()
+        .parse()
+        .expect("Failed to parse brightness. This should never happen.")
+}
+
 pub fn set_brightness(value: u16) -> Result<(), std::io::Error> {
     let brightness_path = vendor_path().join("brightness");
 

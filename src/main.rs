@@ -1,10 +1,14 @@
-use backlight_control_rs::{get_max_brightness, set_brightness};
+use backlight_control_rs::*;
 use clap::{Command, Parser, ValueHint};
 
 fn main() {
     let args = Args::parse();
 
-    println!("Max brightness: {}", get_max_brightness());
+    if args.stats {
+        println!("Max: {}", get_max_brightness());
+        println!("Current: {}", get_brightness());
+        return;
+    }
 
     set_brightness(300).expect("ok");
 
@@ -32,7 +36,7 @@ struct Args {
     value: Option<String>,
     /// Print backlight information
     ///
-    /// If this is used no value be set, even if provided
+    /// If this is used no value will be set, even if provided
     #[arg(short, long)]
     stats: bool,
 }

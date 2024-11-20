@@ -6,8 +6,21 @@ fn main() {
     let args = Args::parse();
 
     if args.stats {
-        println!("Max: {}", get_max_brightness());
-        println!("Current: {}", get_brightness());
+        let max_brightness = get_max_brightness();
+        let brightness = get_brightness();
+
+        let max_brightness_output = match max_brightness {
+            Ok(s) => s.to_string(),
+            Err(e) => format!("Failed to get max brightness: {}", e),
+        };
+
+        let brightness_output = match brightness {
+            Ok(s) => s.to_string(),
+            Err(e) => format!("Failed to get brightness: {}", e),
+        };
+
+        println!("Max: {}", max_brightness_output);
+        println!("Current: {}", brightness_output);
         return;
     }
 
@@ -31,8 +44,6 @@ fn main() {
                 .expect("Failed to adjust brightness absolutely");
         }
     }
-
-    // set_brightness(300).expect("ok");
 }
 
 #[derive(Parser, Debug)]

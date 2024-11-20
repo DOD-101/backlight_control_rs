@@ -64,7 +64,7 @@ pub fn adjust_brightness_relative(value: i16, percentage: bool) -> io::Result<()
         return Ok(());
     }
 
-    let new_brightness: i16 = brightness - value;
+    let new_brightness: i16 = brightness + value;
 
     set_brightness(max(0, new_brightness).try_into().unwrap())
 }
@@ -74,8 +74,6 @@ pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> io::Result<()
         let max_brightness: u16 = get_max_brightness()?;
 
         let new_brightness: u16 = (max_brightness as f32 * (value as f32 / 100.0)).max(0.0) as u16;
-
-        println!("{new_brightness}");
 
         set_brightness(new_brightness)?;
 

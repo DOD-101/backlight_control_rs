@@ -1,3 +1,4 @@
+//! This lib allows for simple adjustment of the users backlight.
 use std::{
     cmp::{max, min},
     fs, io,
@@ -7,6 +8,9 @@ use std::{
 
 const BRIGHTNESS_BASE_PATH: &str = "/sys/class/backlight";
 
+/// Internal function to get the path of the backlight
+///
+/// This is different from system to system, since it depends on the GPU.
 fn vendor_path() -> &'static PathBuf {
     static VENDOR_DIR: OnceLock<PathBuf> = OnceLock::new();
     VENDOR_DIR.get_or_init(|| {
@@ -21,6 +25,12 @@ fn vendor_path() -> &'static PathBuf {
     })
 }
 
+/// Gets the max brightness
+///
+/// ## Panics
+///
+/// Will only panic if it cannot parse the value in in the `max_brightness` file. This should never
+/// happen. If it does this is an OS error.
 pub fn get_max_brightness() -> io::Result<u16> {
     let max_brightness_path = vendor_path().join("max_brightness");
 
@@ -30,6 +40,12 @@ pub fn get_max_brightness() -> io::Result<u16> {
         .expect("Failed to parse max brightness. This should never happen."))
 }
 
+/// Gets the current brightness
+///
+/// ## Panics
+///
+/// Will only panic if it cannot parse the value in in the `brightness` file. This should never
+/// happen. If it does this is an OS error.
 pub fn get_brightness() -> io::Result<u16> {
     let brightness_path = vendor_path().join("brightness");
 
@@ -39,6 +55,9 @@ pub fn get_brightness() -> io::Result<u16> {
         .expect("Failed to parse brightness. This should never happen."))
 }
 
+/// Attempts to set the brightness
+///
+/// This will fail if you lack the proper permissions.
 pub fn set_brightness(value: u16) -> Result<(), std::io::Error> {
     let brightness_path = vendor_path().join("brightness");
 
@@ -50,6 +69,13 @@ pub fn set_brightness(value: u16) -> Result<(), std::io::Error> {
     Ok(())
 }
 
+/// Convenience wrapper around set_brightness for adjusting relative to the current value
+///
+/// # Parameters
+///
+/// - `value`: The value to adjust by.
+///
+/// - `percentage`: Will treat the value as a percentage to adjust by, rather than an absolute value.
 pub fn adjust_brightness_relative(value: i16, percentage: bool) -> io::Result<()> {
     let brightness: i16 = get_brightness()?.try_into().unwrap();
 
@@ -69,6 +95,13 @@ pub fn adjust_brightness_relative(value: i16, percentage: bool) -> io::Result<()
     set_brightness(max(0, new_brightness).try_into().unwrap())
 }
 
+/// Convenience wrapper around set_brightness for setting absolute values
+///
+/// ## Parameters
+///
+/// - `value`: The value to set to.
+///
+/// - `percentage`: Will treat the value as a percentage of the max to set to, rather than an absolute value.
 pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> io::Result<()> {
     if percentage {
         let max_brightness: u16 = get_max_brightness()?;

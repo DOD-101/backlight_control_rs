@@ -1,11 +1,17 @@
 [package]
 name = "backlight_control_rs"
+description = "Backlight control is a re-written version of [backlight_control](https://github.com/Hendrikto/backlight_control/) with a few key improvements."
 version = "0.1.0"
 edition = "2021"
+keywords = ["backlight", "util", "cli"]
+categories = ["command-line-utilities", "filesystem"]
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/DOD-101/backlight_control_rs"
+authors = ["David Thievon"]
 
 [lib]
 name = "backlight_control_rs"
-version = "0.1.0"
 edition = "2021"
 
 [dependencies]

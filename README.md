@@ -22,7 +22,7 @@ There are a few reasons:
 
 And backlight_control_rs has all the simplicity of backlight_control, without any of the troubles.
 
-As for other options they either fall into the same category as light in having too much, or needing X-server to work.
+As for other options, they either fall into the same category as light in having too much, or needing X-server to work.
 
 ## Usage
 
@@ -33,7 +33,7 @@ backlight_control_rs 50 # set brightness to 50
 ```
 
 NOTE: These values are absolute. They do not adjust as `n%` as with backlight_control. 
-To do this append a `%`:
+To do this, append a `%`:
 
 ```sh
 backlight_control_rs +50% # increase brightness by 50%
@@ -45,15 +45,31 @@ You can run with `-s` to print information about the backlight, rather than maki
 
 ## Installing
 
-You can use `cargo install`, however this method is less desirable than installing via your package manager.
+You can use `cargo install`, however, this method is less desirable than installing via your package manager.
 
-## Nix / NixOs
+### Nix / NixOs
+
+WIP
+
+### AUR
 
 WIP
 
-## AUR
+## Note on permissions
 
-WIP
+The original backlight_control used permissions to allow anyone to run the binary as root. 
+This made it possible to change the backlight brightness without any further configuration.
+This approach doesn't work on NixOs however, since files in `/nix/store` can't have their permissions set in this way. 
+
+### The solution: udev rules
+
+This is what most other do programs to handle this issue. 
+
+By using a udev rule to change the ownership of the `brightness` file to the `video` group any user in that group, can change the backlight brightness.
+
+<!-- On NixOs setting this rule is handled for you by setting `programs.backlight_control_rs.enable = true`. --> 
+
+This is also the reason why you should use a package manager rather than cargo install, sine the permissions won't be handled for you.
 
 ## License 
 
@@ -64,5 +80,5 @@ This project is licensed under either of
 
 at your option.
 
-It's inspiration comes in no small part from [backlight_control](https://github.com/Hendrikto/backlight_control) and [light](https://gitlab.com/dpeukert/light).
+Its inspiration comes in no small part from [backlight_control](https://github.com/Hendrikto/backlight_control) and [light](https://gitlab.com/dpeukert/light).
 

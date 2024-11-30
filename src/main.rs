@@ -1,27 +1,39 @@
+use std::process::ExitCode;
+
 use backlight_control_rs::*;
 use clap::{Parser, ValueHint};
 use regex::Regex;
 
-fn main() {
+fn main() -> ExitCode {
     let args = Args::parse();
 
     if args.stats {
         let max_brightness = get_max_brightness();
         let brightness = get_brightness();
 
+        let exit_code = if max_brightness.is_ok() && brightness.is_ok() {
+            ExitCode::SUCCESS
+        } else {
+            ExitCode::FAILURE
+        };
+
         let max_brightness_output = match max_brightness {
             Ok(s) => s.to_string(),
-            Err(e) => format!("Failed to get max brightness: {}", e),
+            Err(e) => {
+                format!("Failed to get max brightness: {}", e)
+            }
         };
 
         let brightness_output = match brightness {
             Ok(s) => s.to_string(),
-            Err(e) => format!("Failed to get brightness: {}", e),
+            Err(e) => {
+                format!("Failed to get brightness: {}", e)
+            }
         };
 
         println!("Max: {}", max_brightness_output);
         println!("Current: {}", brightness_output);
-        return;
+        return exit_code;
     }
 
     if let Some(val) = args.value {
@@ -35,15 +47,21 @@ fn main() {
         if let '+' | '-' = val.chars().next().unwrap() {
             let value: i16 = value_string.parse().unwrap();
 
-            adjust_brightness_relative(value, percentage)
-                .expect("Failed to adjust brightness relatively");
+            if let Err(e) = adjust_brightness_relative(value, percentage) {
+                eprintln!("Failed to adjust brightness: {}", e);
+                return ExitCode::FAILURE;
+            }
         } else {
             let value: u16 = value_string.parse().unwrap();
 
-            adjust_brightness_absolute(value, percentage)
-                .expect("Failed to adjust brightness absolutely");
-        }
+            if let Err(e) = adjust_brightness_absolute(value, percentage) {
+                eprintln!("Failed to adjust brightness: {}", e);
+                return ExitCode::FAILURE;
+            }
+        };
     }
+
+    ExitCode::SUCCESS
 }
 
 #[derive(Parser, Debug)]
@@ -74,7 +92,7 @@ struct Args {
     stats: bool,
 }
 
-fn value_validator(value: &str) -> Result<String, String> {
+fn value_validator(value: &str) -> std::result::Result<String, String> {
     if value.is_empty() {
         return Ok("".to_string());
     }

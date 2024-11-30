@@ -1,28 +1,27 @@
 //! This lib allows for simple adjustment of the users backlight.
 use std::{
     cmp::{max, min},
-    fs, io,
+    fs,
     path::PathBuf,
-    sync::OnceLock,
 };
+
+pub mod error;
+
+pub use error::*;
 
 const BRIGHTNESS_BASE_PATH: &str = "/sys/class/backlight";
 
 /// Internal function to get the path of the backlight
 ///
 /// This is different from system to system, since it depends on the GPU.
-fn vendor_path() -> &'static PathBuf {
-    static VENDOR_DIR: OnceLock<PathBuf> = OnceLock::new();
-    VENDOR_DIR.get_or_init(|| {
-        let vendor_dir = fs::read_dir(BRIGHTNESS_BASE_PATH)
-            .expect("Failed to read backlight dir.")
-            .filter_map(Result::ok) // Filter out any errors
-            .next() // Get the first entry
-            .expect("Failed to get first Entry.") // Handle case where there are no entries
-            .file_name(); // Get the file name directly
+fn vendor_path() -> Result<PathBuf> {
+    let vendor_dir = fs::read_dir(BRIGHTNESS_BASE_PATH)?
+        .filter_map(std::io::Result::ok) // Filter out any errors
+        .next() // Get the first entry
+        .ok_or(Error::FailedToGetFirstEntry)?
+        .file_name(); // Get the file name directly
 
-        PathBuf::from(BRIGHTNESS_BASE_PATH).join(vendor_dir)
-    })
+    Ok(PathBuf::from(BRIGHTNESS_BASE_PATH).join(vendor_dir))
 }
 
 /// Gets the max brightness
@@ -31,8 +30,8 @@ fn vendor_path() -> &'static PathBuf {
 ///
 /// Will only panic if it cannot parse the value in in the `max_brightness` file. This should never
 /// happen. If it does this is an OS error.
-pub fn get_max_brightness() -> io::Result<u16> {
-    let max_brightness_path = vendor_path().join("max_brightness");
+pub fn get_max_brightness() -> Result<u16> {
+    let max_brightness_path = vendor_path()?.join("max_brightness");
 
     Ok(fs::read_to_string(&max_brightness_path)?
         .trim()
@@ -46,8 +45,8 @@ pub fn get_max_brightness() -> io::Result<u16> {
 ///
 /// Will only panic if it cannot parse the value in in the `brightness` file. This should never
 /// happen. If it does this is an OS error.
-pub fn get_brightness() -> io::Result<u16> {
-    let brightness_path = vendor_path().join("brightness");
+pub fn get_brightness() -> Result<u16> {
+    let brightness_path = vendor_path()?.join("brightness");
 
     Ok(fs::read_to_string(&brightness_path)?
         .trim()
@@ -58,8 +57,8 @@ pub fn get_brightness() -> io::Result<u16> {
 /// Attempts to set the brightness
 ///
 /// This will fail if you lack the proper permissions.
-pub fn set_brightness(value: u16) -> Result<(), std::io::Error> {
-    let brightness_path = vendor_path().join("brightness");
+pub fn set_brightness(value: u16) -> Result<()> {
+    let brightness_path = vendor_path()?.join("brightness");
 
     fs::write(
         brightness_path,
@@ -76,7 +75,7 @@ pub fn set_brightness(value: u16) -> Result<(), std::io::Error> {
 /// - `value`: The value to adjust by.
 ///
 /// - `percentage`: Will treat the value as a percentage to adjust by, rather than an absolute value.
-pub fn adjust_brightness_relative(value: i16, percentage: bool) -> io::Result<()> {
+pub fn adjust_brightness_relative(value: i16, percentage: bool) -> Result<()> {
     let brightness: i16 = get_brightness()?.try_into().unwrap();
 
     if percentage {
@@ -102,7 +101,7 @@ pub fn adjust_brightness_relative(value: i16, percentage: bool) -> io::Result<()
 /// - `value`: The value to set to.
 ///
 /// - `percentage`: Will treat the value as a percentage of the max to set to, rather than an absolute value.
-pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> io::Result<()> {
+pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> Result<()> {
     if percentage {
         let max_brightness: u16 = get_max_brightness()?;
 

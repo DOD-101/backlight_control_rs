@@ -30,7 +30,7 @@ fn vendor_path() -> Result<PathBuf> {
 ///
 /// Will only panic if it cannot parse the value in in the `max_brightness` file. This should never
 /// happen. If it does this is an OS error.
-pub fn get_max_brightness() -> Result<u16> {
+pub fn get_max_brightness() -> Result<u32> {
     let max_brightness_path = vendor_path()?.join("max_brightness");
 
     Ok(fs::read_to_string(&max_brightness_path)?
@@ -45,7 +45,7 @@ pub fn get_max_brightness() -> Result<u16> {
 ///
 /// Will only panic if it cannot parse the value in in the `brightness` file. This should never
 /// happen. If it does this is an OS error.
-pub fn get_brightness() -> Result<u16> {
+pub fn get_brightness() -> Result<u32> {
     let brightness_path = vendor_path()?.join("brightness");
 
     Ok(fs::read_to_string(&brightness_path)?
@@ -57,7 +57,7 @@ pub fn get_brightness() -> Result<u16> {
 /// Attempts to set the brightness
 ///
 /// This will fail if you lack the proper permissions.
-pub fn set_brightness(value: u16) -> Result<()> {
+pub fn set_brightness(value: u32) -> Result<()> {
     let brightness_path = vendor_path()?.join("brightness");
 
     fs::write(
@@ -75,20 +75,20 @@ pub fn set_brightness(value: u16) -> Result<()> {
 /// - `value`: The value to adjust by.
 ///
 /// - `percentage`: Will treat the value as a percentage to adjust by, rather than an absolute value.
-pub fn adjust_brightness_relative(value: i16, percentage: bool) -> Result<()> {
-    let brightness: i16 = get_brightness()?.try_into().unwrap();
+pub fn adjust_brightness_relative(value: i32, percentage: bool) -> Result<()> {
+    let brightness: i32 = get_brightness()?.try_into().unwrap();
 
     if percentage {
-        let max_brightness: i16 = get_max_brightness()?.try_into().unwrap();
+        let max_brightness: i32 = get_max_brightness()?.try_into().unwrap();
 
-        let new_brightness: u16 = (max_brightness * value / 100 + brightness).max(0) as u16;
+        let new_brightness: u32 = (max_brightness * value / 100 + brightness).max(0) as u32;
 
         set_brightness(new_brightness)?;
 
         return Ok(());
     }
 
-    let new_brightness: i16 = brightness + value;
+    let new_brightness: i32 = brightness + value;
 
     set_brightness(max(0, new_brightness).try_into().unwrap())
 }
@@ -100,11 +100,11 @@ pub fn adjust_brightness_relative(value: i16, percentage: bool) -> Result<()> {
 /// - `value`: The value to set to.
 ///
 /// - `percentage`: Will treat the value as a percentage of the max to set to, rather than an absolute value.
-pub fn adjust_brightness_absolute(value: u16, percentage: bool) -> Result<()> {
+pub fn adjust_brightness_absolute(value: u32, percentage: bool) -> Result<()> {
     if percentage {
-        let max_brightness: u16 = get_max_brightness()?;
+        let max_brightness: u32 = get_max_brightness()?;
 
-        let new_brightness: u16 = max_brightness * value / 100;
+        let new_brightness: u32 = max_brightness * value / 100;
 
         set_brightness(new_brightness)?;
 

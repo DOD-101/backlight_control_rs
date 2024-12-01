@@ -45,14 +45,14 @@ fn main() -> ExitCode {
 
         // NOTE: Unwrapping here *should* be safe since we know the string has len of at least 1
         if let '+' | '-' = val.chars().next().unwrap() {
-            let value: i16 = value_string.parse().unwrap();
+            let value: i32 = value_string.parse().unwrap();
 
             if let Err(e) = adjust_brightness_relative(value, percentage) {
                 eprintln!("Failed to adjust brightness: {}", e);
                 return ExitCode::FAILURE;
             }
         } else {
-            let value: u16 = value_string.parse().unwrap();
+            let value: u32 = value_string.parse().unwrap();
 
             if let Err(e) = adjust_brightness_absolute(value, percentage) {
                 eprintln!("Failed to adjust brightness: {}", e);

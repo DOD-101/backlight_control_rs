@@ -1,7 +1,7 @@
 [package]
 name = "backlight_control_rs"
 description = "Backlight control is a re-written version of [backlight_control](https://github.com/Hendrikto/backlight_control/) with a few key improvements."
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 keywords = ["backlight", "util", "cli"]
 categories = ["command-line-utilities", "filesystem"]

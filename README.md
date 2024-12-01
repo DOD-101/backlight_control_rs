@@ -1,6 +1,6 @@
 # backlight_control_rs
 
-[![Static Badge](https://img.shields.io/badge/Crates.io-orange?style=flat)](https://crates.io/crates/config-store)
+[![Static Badge](https://img.shields.io/badge/Crates.io-orange?style=flat)](https://crates.io/crates/backlight_control_rs)
 ![Dynamic TOML Badge](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FDOD-101%2Fbacklight_control_rs%2Frefs%2Fheads%2Fmaster%2FCargo.toml&query=package.version&label=Version&color=rgb(20%2C%2020%2C%2020))
 
 Backlight control is a re-written version of [backlight_control](https://github.com/Hendrikto/backlight_control/) with a few key improvements.
@@ -15,7 +15,7 @@ There are a few reasons:
 
 3. backlight_control_rs has made a few QOL changes compared to the original: better help message, `--stats` option, absolute and relative adjustments
 
-4. backlight_control doesn't work on NixOs due to how it is written. backlight_control_rs addresses this.
+4. backlight_control doesn't work on NixOs due to how it's written. backlight_control_rs addresses this.
 
 ## Why use this over something like `light`?
 

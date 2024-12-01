@@ -72,17 +72,7 @@ fn main() -> ExitCode {
 struct Args {
     /// The value to set / adjust the brightness by
     ///
-    /// Examples:
-    ///
-    /// +50
-    ///
-    /// -10
-    ///
-    /// 200
-    ///
-    /// 50%
-    ///
-    /// +10%
+    /// Examples: +50 | -10 | 200 | 50% | +10%
     #[arg(value_hint = ValueHint::Other, value_parser = value_validator, allow_hyphen_values = true)]
     value: Option<String>,
     /// Print backlight information

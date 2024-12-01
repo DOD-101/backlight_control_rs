@@ -1,8 +1,7 @@
 # backlight_control_rs
 
-<!-- [![Static Badge](https://img.shields.io/badge/Crates.io-orange?style=flat)](https://crates.io/crates/config-store) -->
+[![Static Badge](https://img.shields.io/badge/Crates.io-orange?style=flat)](https://crates.io/crates/config-store)
 ![Dynamic TOML Badge](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FDOD-101%2Fbacklight_control_rs%2Frefs%2Fheads%2Fmaster%2FCargo.toml&query=package.version&label=Version&color=rgb(20%2C%2020%2C%2020))
-
 
 Backlight control is a re-written version of [backlight_control](https://github.com/Hendrikto/backlight_control/) with a few key improvements.
 
@@ -15,6 +14,8 @@ There are a few reasons:
 2. backlight_control_rs comes with a library, so that other projects can easily adjust the backlight brightness as well. 
 
 3. backlight_control_rs has made a few QOL changes compared to the original: better help message, `--stats` option, absolute and relative adjustments
+
+4. backlight_control doesn't work on NixOs due to how it is written. backlight_control_rs addresses this.
 
 ## Why use this over something like `light`?
 
@@ -63,7 +64,7 @@ This approach doesn't work on NixOs however, since files in `/nix/store` can't h
 
 ### The solution: udev rules
 
-This is what most other do programs to handle this issue. 
+This is what most other programs do to handle this issue. 
 
 By using a udev rule to change the ownership of the `brightness` file to the `video` group any user in that group, can change the backlight brightness.
 

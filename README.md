@@ -48,10 +48,6 @@ You can run with `-s` to print information about the backlight, rather than maki
 
 You can use `cargo install`, however, this method is less desirable than installing via your package manager.
 
-### Nix / NixOs
-
-WIP
-
 ### AUR
 
 WIP
@@ -60,9 +56,9 @@ WIP
 
 The original backlight_control used permissions to allow anyone to run the binary as root. 
 This made it possible to change the backlight brightness without any further configuration.
-This approach doesn't work on NixOs however, since files in `/nix/store` can't have their permissions set in this way. 
+backlight_control_rs takes a different aproach:
 
-### The solution: udev rules
+### udev rules
 
 This is what most other programs do to handle this issue. 
 
